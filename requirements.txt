@@ -1,4 +1,4 @@
-Python 3.10 required
+#Python 3.10 required
 # Build tools
 setuptools>=65.0.0
 wheel>=0.40.0
