@@ -34,9 +34,15 @@ def load_model_on_startup():
             ml_model.load_model()
             model_loaded = True
             print("✓ ML Model loaded successfully")
+        else:
+            print(f"✗ Model file not found at: {model_path}")
+            model_loaded = False
     except Exception as e:
         print(f"✗ Error loading model: {e}")
         model_loaded = False
+
+# Load model immediately on app creation (for Gunicorn)
+load_model_on_startup()
 
 
 @app.route('/')
@@ -164,9 +170,6 @@ def server_error(error):
 
 
 if __name__ == '__main__':
-    # Load model on startup
-    load_model_on_startup()
-    
     # Get port from environment variable or default to 5000
     port = int(os.environ.get('PORT', 5000))
     
