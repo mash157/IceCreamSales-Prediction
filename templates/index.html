@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ice Cream Sales Predictor - ML System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="gradient-blob blob-1"></div>
+        <div class="gradient-blob blob-2"></div>
+        <div class="gradient-blob blob-3"></div>
+        <div class="gradient-blob blob-4"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">
+                    <span class="icon">🍦</span>
+                    Ice Cream Sales Predictor
+                </h1>
+                <p class="subtitle">Machine Learning Powered Sales Forecast</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="section glass-morphism">
+                <div class="section-header">
+                    <h2 class="section-title">Prediction Input</h2>
+                    <p class="section-description">Enter weather conditions to predict ice cream sales</p>
+                </div>
+
+                <form class="prediction-form" id="predictionForm">
+                    <!-- Temperature Input -->
+                    <div class="form-group">
+                        <label for="temperature" class="form-label">
+                            <span class="label-icon">🌡️</span>
+                            Temperature (°F)
+                        </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="number" 
+                                id="temperature" 
+                                name="temperature" 
+                                class="form-input"
+                                placeholder="Enter temperature (e.g., 75)"
+                                min="-50"
+                                max="150"
+                                step="0.1"
+                                required
+                            >
+                            <span class="input-unit">°F</span>
+                        </div>
+                        <div class="input-range">
+                            <input 
+                                type="range" 
+                                id="tempRange" 
+                                min="50" 
+                                max="100" 
+                                value="75" 
+                                class="slider"
+                            >
+                            <div class="range-labels">
+                                <span>50°F</span>
+                                <span>100°F</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rainfall Input -->
+                    <div class="form-group">
+                        <label for="rainfall" class="form-label">
+                            <span class="label-icon">🌧️</span>
+                            Rainfall (inches)
+                        </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="number" 
+                                id="rainfall" 
+                                name="rainfall" 
+                                class="form-input"
+                                placeholder="Enter rainfall (e.g., 0.5)"
+                                min="0"
+                                max="10"
+                                step="0.01"
+                                required
+                            >
+                            <span class="input-unit">in</span>
+                        </div>
+                        <div class="input-range">
+                            <input 
+                                type="range" 
+                                id="rainRange" 
+                                min="0" 
+                                max="2" 
+                                value="0.5" 
+                                step="0.01"
+                                class="slider"
+                            >
+                            <div class="range-labels">
+                                <span>0 in</span>
+                                <span>2 in</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-content">
+                            <span class="btn-icon">🔮</span>
+                            Predict Sales
+                        </span>
+                        <span class="btn-loader hidden"></span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="section glass-morphism results-section hidden">
+                <div class="section-header">
+                    <h2 class="section-title">Prediction Results</h2>
+                </div>
+
+                <div class="results-grid">
+                    <!-- Input Summary -->
+                    <div class="result-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Input Conditions</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="result-item">
+                                <span class="result-label">Temperature</span>
+                                <span class="result-value" id="resultTemp">—</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Rainfall</span>
+                                <span class="result-value" id="resultRain">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prediction Result -->
+                    <div class="result-card featured">
+                        <div class="card-header">
+                            <h3 class="card-title">Predicted Sales</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="prediction-big">
+                                <span class="prediction-number" id="predictionValue">0</span>
+                                <span class="prediction-unit">🍦</span>
+                            </div>
+                            <p class="prediction-note">ice creams expected to sell</p>
+                        </div>
+                    </div>
+
+                    <!-- Insights -->
+                    <div class="result-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Insights</h3>
+                        </div>
+                        <div class="card-content">
+                            <p class="insight-text" id="insightText">—</p>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill"></div>
+                            </div>
+                            <p class="confidence-label">Model Confidence</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clear Results Button -->
+                <button class="btn btn-secondary" id="clearBtn">
+                    <span class="btn-icon">↻</span>
+                    New Prediction
+                </button>
+            </section>
+
+            <!-- Error Section -->
+            <div id="errorSection" class="alert alert-error hidden">
+                <span class="alert-icon">⚠️</span>
+                <span class="alert-message" id="errorMessage">An error occurred</span>
+                <button class="alert-close" onclick="this.parentElement.classList.add('hidden')">×</button>
+            </div>
+
+            <!-- Statistics & Insights Section -->
+            <section class="section glass-morphism stats-section">
+                <div class="section-header">
+                    <h2 class="section-title">📊 Data Insights & Analytics</h2>
+                    <p class="section-description">Historical patterns and trends from training data</p>
+                </div>
+
+                <div class="stats-grid">
+                    <!-- Sales Statistics -->
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Average Daily Sales</div>
+                            <div class="stat-value" id="statAvgSales">120</div>
+                            <div class="stat-unit">🍦 ice creams</div>
+                        </div>
+                    </div>
+
+                    <!-- Temperature Insight -->
+                    <div class="stat-card stat-card-warm">
+                        <div class="stat-icon">🌡️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Temperature Impact</div>
+                            <div class="stat-value" id="statTempCoeff">+2.8</div>
+                            <div class="stat-unit">per °F increase</div>
+                        </div>
+                    </div>
+
+                    <!-- Rainfall Insight -->
+                    <div class="stat-card stat-card-cool">
+                        <div class="stat-icon">🌧️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Rainfall Impact</div>
+                            <div class="stat-value" id="statRainCoeff">-35.2</div>
+                            <div class="stat-unit">per inch of rain</div>
+                        </div>
+                    </div>
+
+                    <!-- Best Weather Day -->
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">🌞</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Peak Sales Condition</div>
+                            <div class="stat-value">~250+</div>
+                            <div class="stat-unit">80°F, dry weather</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Analytics -->
+                <div class="analytics-container">
+                    <h3 class="analytics-title">🎯 Key Performance Indicators</h3>
+                    <div class="analytics-grid">
+                        <!-- Best Day -->
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <span class="analytics-icon">🏆</span>
+                                <span class="analytics-name">Highest Sales Day</span>
+                            </div>
+                            <div class="analytics-value" id="bestDayValue">252 units</div>
+                            <div class="analytics-condition" id="bestDayCondition">98°F, 0.73" rain</div>
+                        </div>
+
+                        <!-- Worst Day -->
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <span class="analytics-icon">📉</span>
+                                <span class="analytics-name">Lowest Sales Day</span>
+                            </div>
+                            <div class="analytics-value" id="worstDayValue">15 units</div>
+                            <div class="analytics-condition" id="worstDayCondition">49°F, 0.3" rain</div>
+                        </div>
+
+                        <!-- Avg per Month -->
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <span class="analytics-icon">📅</span>
+                                <span class="analytics-name">Monthly Average</span>
+                            </div>
+                            <div class="analytics-value" id="monthlyAvgValue">123 units</div>
+                            <div class="analytics-condition">Across 7 months</div>
+                        </div>
+
+                        <!-- Accuracy -->
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <span class="analytics-icon">✅</span>
+                                <span class="analytics-name">Model Accuracy</span>
+                            </div>
+                            <div class="analytics-value" id="accuracyValue">98.88%</div>
+                            <div class="analytics-condition">R² test score</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Correlations Chart -->
+                <div class="correlation-container">
+                    <h3 class="correlation-title">🔗 Feature Correlations</h3>
+                    <div class="correlation-chart">
+                        <div class="correlation-item">
+                            <div class="correlation-label">Temperature → Sales</div>
+                            <div class="correlation-bar-wrapper">
+                                <div class="correlation-bar positive" style="width: 92%"></div>
+                            </div>
+                            <div class="correlation-percent">+0.92</div>
+                        </div>
+                        <div class="correlation-item">
+                            <div class="correlation-label">Rainfall → Sales</div>
+                            <div class="correlation-bar-wrapper">
+                                <div class="correlation-bar negative" style="width: 78%"></div>
+                            </div>
+                            <div class="correlation-percent">-0.78</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Model Info Section -->
+            <section class="section glass-morphism info-section">
+                <div class="section-header">
+                    <h2 class="section-title">🤖 Model Information</h2>
+                    <p class="section-description">Technical specifications and performance metrics</p>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Model Type</span>
+                        <span class="info-value">Linear Regression</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Features</span>
+                        <span class="info-value">Temperature, Rainfall</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Target Variable</span>
+                        <span class="info-value">Ice Cream Sales</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Training Data</span>
+                        <span class="info-value" id="trainingInfo">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="metrics-container">
+                    <h3 class="metrics-title">Performance Metrics</h3>
+                    <div class="metrics-grid" id="metricsGrid">
+                        <div class="metric-card">
+                            <span class="metric-label">MAE (Test)</span>
+                            <span class="metric-value" id="metricMAE">—</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">R² (Train)</span>
+                            <span class="metric-value" id="metricR2Train">—</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">R² (Test)</span>
+                            <span class="metric-value" id="metricR2">—</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">MAE (Train)</span>
+                            <span class="metric-value" id="metricMAETrain">—</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">Powered by Machine Learning | Flask + Scikit-learn</p>
+            <p class="footer-credit">Developed by @mash157❤️</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
