@@ -30,15 +30,27 @@ def load_model_on_startup():
     global model_loaded
     try:
         model_path = os.path.join(model_dir, 'ice_cream_model.pkl')
-        if os.path.exists(model_path):
+        scaler_path = os.path.join(model_dir, 'scaler.pkl')
+        
+        print(f"[DEBUG] Model directory: {model_dir}")
+        print(f"[DEBUG] Model path: {model_path}")
+        print(f"[DEBUG] Scaler path: {scaler_path}")
+        print(f"[DEBUG] Model file exists: {os.path.exists(model_path)}")
+        print(f"[DEBUG] Scaler file exists: {os.path.exists(scaler_path)}")
+        
+        if os.path.exists(model_path) and os.path.exists(scaler_path):
             ml_model.load_model()
             model_loaded = True
-            print("✓ ML Model loaded successfully")
+            print("[SUCCESS] ML Model loaded successfully")
         else:
-            print(f"✗ Model file not found at: {model_path}")
+            print("[ERROR] Model files not found!")
+            print(f"  Model file: {os.path.exists(model_path)}")
+            print(f"  Scaler file: {os.path.exists(scaler_path)}")
             model_loaded = False
     except Exception as e:
-        print(f"✗ Error loading model: {e}")
+        import traceback
+        print(f"[ERROR] Error loading model: {e}")
+        print(f"[ERROR] Traceback: {traceback.format_exc()}")
         model_loaded = False
 
 # Load model immediately on app creation (for Gunicorn)
