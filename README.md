@@ -10,6 +10,14 @@ A premium machine learning web application that predicts ice cream sales based o
 
 ---
 
+## 🌐 Live Demo
+
+**Try it now:** [https://icecreamsales-prediction.onrender.com/](https://icecreamsales-prediction.onrender.com/)
+
+Deployed on Render.com with Python 3.10 and all dependencies optimized for production.
+
+---
+
 ## ✨ Features
 
 ### 🤖 Machine Learning
