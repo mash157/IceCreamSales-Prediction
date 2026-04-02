@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: icecream-sales-prediction
+    runtime: python-3.10
+    buildCommand: pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
+    startCommand: cd app && gunicorn -w 2 -b 0.0.0.0:$PORT run:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 5000
