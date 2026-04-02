@@ -1,12 +1,12 @@
 #Python 3.10 required
-# Build tools
-setuptools>=65.0.0
-wheel>=0.40.0
+# Build tools (must be installed first)
+setuptools==68.0.0
+wheel==0.41.0
 
-# Core dependencies
-Flask>=3.0.0
-pandas>=2.2.0
-scikit-learn>=1.3.2
-joblib>=1.3.2
-numpy>=1.24.3
-gunicorn>=21.2.0
+# Core dependencies - specific versions with pre-built wheels for Python 3.10
+Flask==3.0.0
+pandas==1.5.3
+scikit-learn==1.3.2
+joblib==1.3.2
+numpy==1.24.3
+gunicorn==21.2.0
